@@ -11,6 +11,7 @@ const logger = require('./logger');
 
 // Config
 const config = require('config');
+const port = process.env.PORT || 3000;
 
 // Set up middleware for request parsing, logging, etc.
 app.use(express.json());
@@ -21,8 +22,9 @@ app.use(morgan('short', { stream: logger.stream }));
 app.use('/', routes);
 
 // Start the API
-app.listen(config.apiPort);
-logger.log('info', `api running on port ${config.apiPort}`);
+
+app.listen(port);
+logger.log('info', `api running on port ${port}`);
 
 // Export API server for testing
 module.exports = app;
