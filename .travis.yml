@@ -3,7 +3,7 @@ node_js:
   - "node"
   - "lts/*"
 script:
-  - npm run coverage    
+  - npm test
 branches:
   only:
     - /.*/
