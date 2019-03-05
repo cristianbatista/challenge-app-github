@@ -1,30 +1,16 @@
-'use strict';
+// This will be our application entry. We'll setup our server here.
+const http = require('http');
+const app = require('./app'); // The express app we just created
 
-// API boilerplate
-const express = require('express');
-const app = express();
-const routes = require('./routes');
-
-// Logging
 const morgan = require('morgan');
 const logger = require('./logger');
-
-// Config
-const config = require('config');
 const port = process.env.PORT || 3000;
 
-// Set up middleware for request parsing, logging, etc.
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.set('port', port);
 app.use(morgan('short', { stream: logger.stream }));
 
-// Load up the routes
-app.use('/', routes);
-
-// Start the API
-
-app.listen(port);
+const server = http.createServer(app);
+server.listen(port);
 logger.log('info', `api running on port ${port}`);
 
-// Export API server for testing
-module.exports = app;
+module.exports = server

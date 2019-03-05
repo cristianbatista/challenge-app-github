@@ -2,7 +2,7 @@
 
 const chai = require('chai');
 const expect = chai.expect;
-const health = require('./index');
+const health = require('../../src/controllers/health');
 
 describe('Health - UT', () => {
 
