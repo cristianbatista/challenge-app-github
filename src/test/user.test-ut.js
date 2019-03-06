@@ -41,7 +41,7 @@ describe('User - UT', () => {
                 return resMock.status;
             };
             resMock.status.send = (send) => {
-                expect(send).to.deep.equal({ message: "User createad" });
+                expect(send).to.have.property("message", "User createad");
                 done();
             };
 
@@ -124,7 +124,7 @@ describe('User - UT', () => {
             };
 
             resMock.status.send = (send) => {
-                expect(send).to.deep.equal({message: "Login successful"});
+                expect(send).to.have.property("message", "Login successful");
                 done();
             };
 
@@ -182,7 +182,7 @@ describe('User - UT', () => {
             const resMock = {};
 
             resMock.status = (statusCode) => {
-                expect(statusCode).to.equal(404);
+                expect(statusCode).to.equal(400);
                 return resMock.status
             };
 

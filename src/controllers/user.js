@@ -1,11 +1,11 @@
-
+const TokenGenerator = require('uuid-token-generator');
 const user = require('../models').user;
 
 module.exports = {
     create(req, res) {
 
         let _password = null;
-        
+       
         if (req.body.password !== null && typeof req.body.password !== 'undefined')
             _password = (Buffer.from(req.body.password).toString('base64'));
 
@@ -29,6 +29,9 @@ module.exports = {
     },
 
     authenticate(req, res) {
+        const tokgen = new TokenGenerator();
+        const _token = tokgen.generate();
+
         return user
             .findAll({
                 where: {
@@ -41,16 +44,17 @@ module.exports = {
                 }
                 else {
                     if (req.body.password !== _user[0].password)
-                        return res.status(404).send({ message: 'Invalid password', });
+                        return res.status(400).send({ message: 'Invalid password', });
                     else {
 
                         const _lastLoginAt = Date.now("YYYY-MM-DD");
 
                         _user[0].update({
-                            lastLoginAt: _lastLoginAt
+                            lastLoginAt: _lastLoginAt,
+                            token: _token
                         })
 
-                        return res.status(200).send({message: "Login successful"});
+                        return res.status(200).send({message: "Login successful", token: _token});
                     }
                 }
             })

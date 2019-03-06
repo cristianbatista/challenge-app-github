@@ -3,21 +3,36 @@ const expect = chai.expect;
 const githubUser = require('../controllers/github-user');
 const sinon = require('sinon');
 const axios = require('axios');
+const userModel = require('../models').user;
 
 describe('Github users - UT', () => {
 
     describe('getUsers()', () => {
         let apiGithub;
+        let userFindAllStub;
 
         beforeEach(function () {
             apiGithub = sinon.stub(axios, 'get');
+            userFindAllStub = sinon.stub(userModel, 'findAll');
         });
 
         afterEach(function () {
             apiGithub.restore();
+            userFindAllStub.restore();
         });
 
         it('get users github - success', (done) => {
+
+            const _lastLoginAt =  Date.now("YYYY-MM-DD");
+
+            userFindAllStub.resolves([
+                new userModel({
+                    username: "joao",
+                    password: "Y2JzMTIz",
+                    token: "xpto12345",
+                    lastLoginAt: _lastLoginAt
+                })
+            ]);
 
             apiGithub.resolves({
                 "status": 200,
@@ -77,7 +92,8 @@ describe('Github users - UT', () => {
                     limit: 15,
                     location: 'brazil',
                     followers: 100,
-                    language: 'java'
+                    language: 'java',
+                    token: 'xpto12345'
                 }
             }
 
@@ -102,6 +118,18 @@ describe('Github users - UT', () => {
         });
 
         it('get users github - bad request', (done) => {
+
+            const _lastLoginAt =  Date.now("YYYY-MM-DD");
+
+            userFindAllStub.resolves([
+                new userModel({
+                    username: "joao",
+                    password: "Y2JzMTIz",
+                    token: "xpto12345",
+                    lastLoginAt: _lastLoginAt
+                })
+            ]);
+            
             apiGithub.resolves({
                 "status": 400
             });
@@ -112,7 +140,8 @@ describe('Github users - UT', () => {
                     limit: 15,
                     location: 'brazil',
                     followers: 100,
-                    language: 'java'
+                    language: 'java',
+                    token: "xpto12345",
                 }
             }
 
@@ -124,7 +153,7 @@ describe('Github users - UT', () => {
             };
 
             resMock.status.send = (send) => {
-                expect(send).to.deep.equal({message: "Github users bad request"});
+                expect(send).to.have.property("message", "Github users bad request");
                 done();
             };
 
@@ -135,6 +164,18 @@ describe('Github users - UT', () => {
         });
 
         it('get users github - not found', (done) => {
+
+            const _lastLoginAt =  Date.now("YYYY-MM-DD");
+
+            userFindAllStub.resolves([
+                new userModel({
+                    username: "joao",
+                    password: "Y2JzMTIz",
+                    token: "xpto12345",
+                    lastLoginAt: _lastLoginAt
+                })
+            ]);
+
             apiGithub.resolves({
                 "status": 404
             });
@@ -145,7 +186,8 @@ describe('Github users - UT', () => {
                     limit: 15,
                     location: 'brazil',
                     followers: 10000000000,
-                    language: 'java'
+                    language: 'java',
+                    token: "xpto12345",
                 }
             }
 
@@ -157,7 +199,7 @@ describe('Github users - UT', () => {
             };
 
             resMock.status.send = (send) => {
-                expect(send).to.deep.equal({message: "Github users not found"});
+                expect(send).to.have.property("message", "Github users not found");
                 done();
             };
 
@@ -168,6 +210,18 @@ describe('Github users - UT', () => {
         });    
         
         it('get users github - internal server error', (done) => {
+            
+            const _lastLoginAt =  Date.now("YYYY-MM-DD");
+
+            userFindAllStub.resolves([
+                new userModel({
+                    username: "joao",
+                    password: "Y2JzMTIz",
+                    token: "xpto12345",
+                    lastLoginAt: _lastLoginAt
+                })
+            ]);
+
             apiGithub.rejects({});
 
             const reqStub = {
@@ -176,7 +230,8 @@ describe('Github users - UT', () => {
                     limit: 15,
                     location: 'brazil',
                     followers: 1,
-                    language: 'java'
+                    language: 'java',
+                    token: "xpto12345",
                 }
             }
 
@@ -198,5 +253,112 @@ describe('Github users - UT', () => {
 
         });
 
+        it('get users github - invalid token', (done) => {
+
+            userFindAllStub.resolves([]);
+
+            const reqStub = {
+                query: {
+                    offset: 1,
+                    limit: 15,
+                    location: 'brazil',
+                    followers: 1,
+                    language: 'java',
+                    token: null,
+                }
+            }
+
+            const resMock = {};
+
+            resMock.status = (statusCode) => {
+                expect(statusCode).to.equal(400);
+                return resMock.status;
+            };
+
+            resMock.status.send = (send) => {
+                expect(send).to.have.property("message", "Invalid token");
+                done();
+            };
+
+            const nextSub = null;
+
+            githubUser.getUsers(reqStub, resMock, nextSub);
+
+        });        
+
+        it('get users github - token expired', (done) => {
+
+            userFindAllStub.resolves([
+                new userModel({
+                    username: "joao",
+                    password: "Y2JzMTIz",
+                    token: "xpto12345",
+                    lastLoginAt: "2019-03-06 17:12:25"
+                })
+            ]);
+
+            const reqStub = {
+                query: {
+                    offset: 1,
+                    limit: 15,
+                    location: 'brazil',
+                    followers: 1,
+                    language: 'java',
+                    token: "xpto12345",
+                }
+            }
+
+            const resMock = {};
+
+            resMock.status = (statusCode) => {
+                expect(statusCode).to.equal(400);
+                return resMock.status;
+            };
+
+            resMock.status.send = (send) => {
+                expect(send).to.have.property("message", "Github users bad request");
+                expect(send.error).to.have.property("message", "Token expired");
+                done();
+            };
+
+            const nextSub = null;
+
+            githubUser.getUsers(reqStub, resMock, nextSub);
+
+        });        
+
+        it('get users github - token not found', (done) => {
+
+            userFindAllStub.resolves([]);
+
+            const reqStub = {
+                query: {
+                    offset: 1,
+                    limit: 15,
+                    location: 'brazil',
+                    followers: 1,
+                    language: 'java',
+                    token: "xpto12345",
+                }
+            }
+
+            const resMock = {};
+
+            resMock.status = (statusCode) => {
+                expect(statusCode).to.equal(400);
+                return resMock.status;
+            };
+
+            resMock.status.send = (send) => {
+                expect(send).to.have.property("message", "Github users bad request");
+                expect(send.error).to.have.property("message", "Token not found");
+                done();
+            };
+
+            const nextSub = null;
+
+            githubUser.getUsers(reqStub, resMock, nextSub);
+
+        });
     });
 });

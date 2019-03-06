@@ -5,7 +5,7 @@ module.exports = {
     username: "postgres",
     password: "root",
     database: "postgres",
-    host: "172.17.0.2",
+    host: "localhost",
     dialect: "postgres",
     portDB: 5432,
     apiGithub: "https://api.github.com"
