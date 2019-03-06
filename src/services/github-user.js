@@ -22,9 +22,9 @@ module.exports = {
             if (location !== null && typeof location !== 'undefined')
                 filters = filters.concat(" location:" + location);
 
-            const response = await axios.get(config.apiGithub + path + "?" + filters + "&page=" + offset + "&per_page=" + limit)
+            const response = await axios.get(config.apiGithub + path + "?" + filters + "&page=" + offset + "&per_page=" + limit);
 
-            return response
+            return response;
 
         } catch (err) {
             return { status: 500, data: err }

@@ -4,7 +4,10 @@ const user = require('../models').user;
 module.exports = {
     create(req, res) {
 
-        const _password = (Buffer.from(req.body.password).toString('base64'));
+        let _password = null;
+        
+        if (req.body.password !== null && typeof req.body.password !== 'undefined')
+            _password = (Buffer.from(req.body.password).toString('base64'));
 
         return user
             .create({
@@ -14,12 +17,12 @@ module.exports = {
             })
             .then(_user => {
                 res.status(201).send({
-                    message: "Usuário criado com sucesso"
+                    message: "User createad"
                 })
             })
             .catch(error => {
                 res.status(400).send({
-                    message: "Falha ao processar a solicitação.",
+                    message: "Failed to process request",
                     exception: error
                 })
             });
@@ -34,11 +37,11 @@ module.exports = {
             })
             .then(_user => {
                 if (_user.length === 0) {
-                    return res.status(404).send({ message: 'Usuário não encontrado' });
+                    return res.status(404).send({ message: 'User not found' });
                 }
                 else {
                     if (req.body.password !== _user[0].password)
-                        return res.status(404).send({ message: 'Senha inválida', });
+                        return res.status(404).send({ message: 'Invalid password', });
                     else {
 
                         const _lastLoginAt = Date.now("YYYY-MM-DD");
@@ -47,10 +50,15 @@ module.exports = {
                             lastLoginAt: _lastLoginAt
                         })
 
-                        return res.status(200).send({message: "Autenticação efeutada com sucesso"});
+                        return res.status(200).send({message: "Login successful"});
                     }
                 }
             })
-            .catch(error => res.status(400).send(error));
+            .catch(error => {
+                res.status(500).send({
+                    message: "Internal Server Error",
+                    exception: error
+                })
+            });
     },
 };
