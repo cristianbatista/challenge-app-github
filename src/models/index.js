@@ -9,9 +9,11 @@ const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
 
 let sequelize;
-  sequelize = new Sequelize(process.env.database || config.database, 
-                            process.env.username || config.username, 
-                            process.env.password || config.password, {host: process.env.host || config.host});
+  sequelize = new Sequelize(process.env.database || config.database,  process.env.username || config.username,  process.env.password || config.password, 
+    {
+      host: process.env.host || config.host,
+      dialect: config.dialect
+    });
 
 fs
   .readdirSync(__dirname)
