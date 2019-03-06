@@ -33,7 +33,7 @@ module.exports = {
                 }
             })
             .then(_user => {
-                if (!_user) {
+                if (_user.length === 0) {
                     return res.status(404).send({ message: 'Usuário não encontrado' });
                 }
                 else {
