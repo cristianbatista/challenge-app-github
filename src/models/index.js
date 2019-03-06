@@ -5,17 +5,17 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
+const config = require(__dirname + '/../config/config.js')[env];
 const db = {};
 
 let sequelize;
-  console.log(process.env)
-  sequelize = new Sequelize(process.env.DATABASE || config.database,  process.env.USERNAME || config.username,  process.env.PASSWORD || config.password, 
-    {
-      host: process.env.HOST_DB || config.host,
-      port: process.env.PORT_DB || 5432,
-      dialect: config.dialect
-    });
+
+sequelize = new Sequelize(config.database, config.username, config.password,
+  {
+    host: config.host,
+    port: config.portDB,
+    dialect: config.dialect
+  });
 
 fs
   .readdirSync(__dirname)
