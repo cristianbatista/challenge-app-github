@@ -2,6 +2,7 @@ const axios = require('axios');
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.js')[env];
 const userModel = require('../models').user;
+const DateDiff = require('date-diff');
 
 module.exports = {
 
@@ -50,8 +51,11 @@ module.exports = {
                     resolve({ success: false, message: 'Token not found' });
                 } else {
 
-                    const diffMs = Date.now("YYYY-MM-DD") - _user[0].lastLoginAt;
-                    const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+                    const today = new Date(Date.now()); 
+                    const lastLogin = new Date(_user[0].lastLoginAt);
+
+                    var diff = new DateDiff(today, lastLogin);
+                    diffMins = diff.minutes();
 
                     if (diffMins > 20)
                         resolve({ success: false, message: 'Token expired' });

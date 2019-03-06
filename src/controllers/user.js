@@ -13,7 +13,8 @@ module.exports = {
             .create({
                 username: req.body.username,
                 name: req.body.name,
-                password: _password
+                password: _password,
+                token: null
             })
             .then(_user => {
                 res.status(201).send({
