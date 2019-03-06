@@ -9,9 +9,10 @@ const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
 
 let sequelize;
-  sequelize = new Sequelize(process.env.database || config.database,  process.env.username || config.username,  process.env.password || config.password, 
+  sequelize = new Sequelize(process.env.DATABASE || config.database,  process.env.USERNAME || config.username,  process.env.PASSWORD || config.password, 
     {
-      host: process.env.host || config.host,
+      host: process.env.HOST || config.host,
+      port: process.env.PORT_DB || 5432,
       dialect: config.dialect
     });
 
