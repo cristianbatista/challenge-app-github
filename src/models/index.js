@@ -11,7 +11,7 @@ const db = {};
 let sequelize;
   sequelize = new Sequelize(process.env.DATABASE || config.database,  process.env.USERNAME || config.username,  process.env.PASSWORD || config.password, 
     {
-      host: process.env.HOST || config.host,
+      host: process.env.HOST_DB || config.host,
       port: process.env.PORT_DB || 5432,
       dialect: config.dialect
     });
