@@ -8,8 +8,11 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 NodeJs 8x
+
 NPM 3.5x
+
 PostgreSQL 11
+
 Docker-compose
 
 ### Installing
@@ -46,3 +49,16 @@ npm test
 ```
 npm run coverage
 ```
+
+### API Docs
+
+* Swagger - Routes and contracts
+
+```
+http://localhost:3000/swagger
+```
+
+### CI/CD
+
+* [TravisCI](https://travis-ci.org/cristianbatista/challenge-app-github)
+* [Heroku](https://dashboard.heroku.com/apps/challenge-app-github)
