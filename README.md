@@ -62,3 +62,38 @@ http://localhost:3000/swagger
 
 * [TravisCI](https://travis-ci.org/cristianbatista/challenge-app-github)
 * [Heroku](https://dashboard.heroku.com/apps/challenge-app-github)
+* Endpoint publish API: `https://challenge-app-github.herokuapp.com/swagger`
+
+### Workflow data
+
+1) create user
+```
+curl -X POST \
+  http://localhost:3000/api/user \
+  -H 'Content-Type: application/json' \
+  -H 'cache-control: no-cache' \
+  -d '{
+    "username": "cbt_silva",
+    "name": "cristian",
+    "password": "cbs123"
+}'
+```
+
+2) authenticate user (get token in response)
+```
+curl -X POST \
+  http://localhost:3000/api/user/authenticate \
+  -H 'Content-Type: application/json' \
+  -H 'cache-control: no-cache' \
+  -d '{
+    "username": "cbt_silva",
+    "password": "Y2JzMTIz"
+}'
+```
+
+3) search github users
+```
+curl -X GET \
+  'http://challenge-app-github.herokuapp.com/api/github-user?offset=1&limit=30&followers=100&language=java&location=brazil&token=NgQ3hsinBbcTbbWT8QP5nk' \
+  -H 'cache-control: no-cache'
+```
