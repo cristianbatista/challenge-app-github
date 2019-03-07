@@ -9,7 +9,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 NodeJs 8x
 
-NPM 3.5x
+NPM 6.9x
 
 PostgreSQL 11
 
